@@ -12,7 +12,7 @@ MenuItemRouter
     .get('/',function (req, res) {
         MenuItem.getAllMenuItems(function (err,MenuItems) {
             if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Retrieving Menu Items!',data:{}});}
-            else{res.json(MenuItems);}
+            else{res.json({'status': 'Success', 'msg' : 'We Got What You Were Looking For!',data:MenuItems});}
         });
     })
     .post('/',function (req, res) {
