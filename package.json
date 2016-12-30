@@ -1,0 +1,34 @@
+{
+  "name": "restaurentapi",
+  "version": "1.0.0",
+  "description": "An Api for feeding Data to Restaurent Website!",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azizahtas/PortfollioApi.git"
+  },
+  "keywords": [
+    "portfollio"
+  ],
+  "author": "Aziz Ahtas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/azizahtas/PortfollioApi/issues"
+  },
+  "homepage": "https://github.com/azizahtas/PortfollioApi#readme",
+  "dependencies": {
+    "body-parser": "*",
+    "cookie-parser": "^1.4.3",
+    "express": "*",
+    "express-session": "^1.14.0",
+    "hbs": "~4.0.0",
+    "jsonwebtoken": "^7.1.9",
+    "lodash": "^4.13.1",
+    "method-override": "^2.3.6",
+    "mongoose": "*"
+  },
+  "devDependencies": {}
+}
