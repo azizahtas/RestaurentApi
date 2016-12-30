@@ -1,6 +1,6 @@
 var express = require('express');
 var CategoryRouter = express.Router();
-var Category = require('../Models/Menu');
+var Category = require('../Models/Category');
 
 CategoryRouter.use('*',function (req, res, next) {
     console.log('Inside Category Controller!');
@@ -11,8 +11,8 @@ CategoryRouter.use('*',function (req, res, next) {
 CategoryRouter
     .get('/',function (req, res) {
         Category.getAllCategories(function (err,Categories) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Retriving All Categories!'});}
-            else{res.json(Categories);}
+            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Retrieving All Categories!',data:{}});}
+            else{res.json({'status': 'Success', 'msg' : 'We Found What your looking For!',data:Categories});}
         });
     })
     .post('/',function (req, res) {
