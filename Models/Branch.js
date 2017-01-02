@@ -4,15 +4,16 @@ var Schema = mongoose.Schema;
 
 var BranchSchema = new Schema({
     Name : {type : String, required : true },
+    Address : {type : String, required : true },
     Location : {
-        Lat:{type : Number, required: true },
-        Long:{type : Number, required: true }
+        Lat:String,
+        Long:String
     },
     Tables : {
-        TNo : {type : Number, required: true },
-        Stat : {type : Number, required: true },
-        Capacity : {type : Number, required: true },
-        Img_Url : {type : Number, required: true }
+        TNo : Number,
+        Booked : Boolean,
+        Cap : Number,
+        Img_Url : String
     },
     Img_Url : {type : String, required: true}
 
@@ -42,7 +43,7 @@ module.exports.UpdateBranch = function(Id,itm,callback){
     Branch.findByIdAndUpdate(Id,itm,{},callback);
 };
 
-module.exports.checkBranchByName = function (name, callback) {
-  Branch.findOne({Name: name},{Name :0,Size:0,Rate:0,__v:0},callback);
+module.exports.checkBranchByName = function(name, callback) {
+  Branch.findOne({Name: name},{Name :0,Address :0,Location:0,Tables:0,Img_Url:0,__v:0},callback);
 };
 
