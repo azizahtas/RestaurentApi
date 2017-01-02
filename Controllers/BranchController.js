@@ -53,6 +53,21 @@ BranchRouter
             res.json({'status': 'Success', 'msg' : branch.Name+ ' Updated Successfully',data:branch._id});
         });
     });
+//Table Routes
+BranchRouter
+    .get('/u/Table/:_term',function (req, res) {
+        var term = req.params['_term'];
+        Branch.getBranches(term, function (err, branches) {
+            if (err) {
+                console.log('Error :' + err);
+                res.json({'status': 'Error', 'msg': 'Error Retrieving Branch!',data:[]});
+            }
+            else {
+                res.json({'status': 'Success', 'msg': 'We found what your looking for!',data:branches});
+            }
+        })
+    });
+
 
 //Misc Routes
 BranchRouter
@@ -80,5 +95,7 @@ BranchRouter
             }
         })
     });
+
+
 
 module.exports = BranchRouter;

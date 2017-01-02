@@ -3,10 +3,11 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var BookingSchema = new Schema({
-    _UserId : {type : String, required : true },
     _TableId : {type : String, required: true},
     _BranchId : {type : String, required: true},
     TNo : {type : Number, required: true},
+
+    _UserId : {type : String, required : true },
     Date : {type : String, required: true },
     Time : {type : String, required: true },
     NoOfPersons : {type : Number, required: true },
