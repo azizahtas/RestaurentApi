@@ -55,19 +55,45 @@ BranchRouter
     });
 //Table Routes
 BranchRouter
-    .get('/u/Table/:_term',function (req, res) {
-        var term = req.params['_term'];
-        Branch.getBranches(term, function (err, branches) {
+    .post('/u/Table/:_id',function (req, res) {
+        var id = req.params['_id'];
+        var table = req.body;
+        Branch.addTable(id,table, function (err, data) {
             if (err) {
                 console.log('Error :' + err);
-                res.json({'status': 'Error', 'msg': 'Error Retrieving Branch!',data:[]});
+                res.json({'status': 'Error', 'msg': 'Error Saving Table!',data:[]});
             }
             else {
-                res.json({'status': 'Success', 'msg': 'We found what your looking for!',data:branches});
+                res.json({'status': 'Success', 'msg': 'Table Created Successfully',data:data.Tables});
+            }
+        })
+    })
+    .put('/u/Table/:_id',function (req, res) {
+        var id = req.params['_id'];
+        var table = req.body;
+        Branch.editTable(id,table, function (err, data) {
+            if (err) {
+                console.log('Error :' + err);
+                res.json({'status': 'Error', 'msg': 'Error Saving Table!',data:[]});
+            }
+            else {
+                res.json({'status': 'Success', 'msg': 'Table Edited Successfully',data:data.Tables});
+            }
+        })
+    })
+    .delete('/u/Table/:_id/:_tableId',function (req, res) {
+        var id = req.params['_id'];
+        var tableId = req.params['_tableId'];
+        Branch.deleteTable(id,tableId, function (err, data) {
+            if (err) {
+                console.log('Error :' + err);
+                res.json({'status': 'Error', 'msg': 'Error Saving Table!',data:[]});
+            }
+            else {
+                res.json({'status': 'Success', 'msg': 'Table Deleted Successfully',data:data.Tables});
             }
         })
     });
-
 
 //Misc Routes
 BranchRouter

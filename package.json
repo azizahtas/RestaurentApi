@@ -11,7 +11,7 @@
     "url": "git+https://github.com/azizahtas/PortfollioApi.git"
   },
   "keywords": [
-    "portfollio"
+    "restaurent"
   ],
   "author": "Aziz Ahtas",
   "license": "ISC",
@@ -20,15 +20,21 @@
   },
   "homepage": "https://github.com/azizahtas/PortfollioApi#readme",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "*",
+    "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
     "express": "*",
-    "express-session": "^1.14.0",
+    "express-session": "^1.14.2",
     "hbs": "~4.0.0",
-    "jsonwebtoken": "^7.1.9",
     "lodash": "^4.13.1",
     "method-override": "^2.3.6",
-    "mongoose": "*"
+    "mongoose": "*",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
+    "passport-jwt": "^2.2.1",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {}
 }

@@ -4,17 +4,34 @@ var app = express();
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
-var jwt = require('jsonwebtoken');
 var Path = require('path');
 var _ = require('lodash');
 var RoutesApi = require('./routes').api;
 var config = require("./config");
+var passport = require('passport');
+var jwt = require('passport-jwt');
+var User = require('./Models/User');
 
 var Port = config.port;
 var path = 'mongodb://'+config.db_host+':'+config.db_port+'/'+config.db;
 mongoose.connect(path);
+require('./config/passport')(passport);
+
 app.set('view engine','hbs');
 app.set('views',Path.join(__dirname,'Views'));
+app.use(express.static('Views/ErrorPage'));
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+//Pasport Needed *****************************************
+app.use(passport.initialize());
+
+var bcrypt   = require('bcrypt-nodejs');
+
+var LocalStrategy   = require('passport-local').Strategy;
+app.use(cookieParser());
+
+//***********************************************************
 
 app.use(function(req, res, next) {
     //res.header("Access-Control-Allow-Origin", "http://localhost:"+config.client);
@@ -24,48 +41,49 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(cookieParser());
-app.use(express.static('Views/ErrorPage'));
+//Routes==============
 //App MiddleWare For All Routes
 app.all('*',function (req,res,next) {
-    var token = req.cookies.access_token;
-    /*if (token) {
-        // verifies secret and checks exp
-        jwt.verify(token, app.get('superSecret'), function (err, decoded) {
-            if (err) {
-                return res.json({success: false, message: 'Failed to authenticate token.'});
-            } else {
-                // if everything is good, save to request for use in other routes
-                req.decoded = decoded;
-                next();
-            }
-        });
-    }
-    else {
-        // if there is no token
-        // return an error
-        return res.status(403).send({
-            success: false,
-            message: 'No token provided.'
-        });
-
-    }*/
     next();
 });
 
 _.forEach(RoutesApi,function (key,value) {
     app.use('/api'+value,key); 
 });
-
-
+/*
 app.get('/',function (req,res) {
     res.redirect('/api');
-});
+});*/
 app.get('/api',function (req,res) {
     res.render('ErrorPage/index');
 });
+//Process the signup form
+app.get('/api/signup',function (req,res) {
+    res.json({msg:'in signup Get'});
+});
+/*
+app.post('/api/signup',
+    passport.authenticate('local-signup'/*,*/
+/*{
+    session: false,
+  /*  successRedirect:'/profile',
+        failureRedirect:'/api/signup'*//*
+}*/
+        /*
+),
+    function (err,req, res) {
+        res.json({duh:"lalala"});
+    }
+);
+
+         app.post('/profile',function (req, res, next) {
+         res.json({"msg":"Into the Profile"})
+         });
+*/
+
+
+
+//****************************************************************************/
 /*
 // Handle 404
 app.use(function(req, res) {
