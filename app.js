@@ -9,7 +9,7 @@ var _ = require('lodash');
 var RoutesApi = require('./routes').api;
 var config = require("./config");
 var passport = require('passport');
-var jwt = require('passport-jwt');
+
 var User = require('./Models/User');
 
 var Port = config.port;

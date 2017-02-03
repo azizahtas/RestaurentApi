@@ -1,5 +1,3 @@
-var LocalStrategy = require("passport-local").Strategy;
-
 var JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
 
@@ -13,14 +11,21 @@ module.exports = function(passport) {
     opts.secretOrKey = config.secret;
 
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
-        User.findOne({email: jwt_payload.email}, function (err, user) {
+        console.log(jwt_payload);
+        User.findOne({"local.email": jwt_payload.email}, function (err, user) {
             if(err){
+                console.log("Duhh 1");
+                console.log(user);
                 return done(err,false);
             }
             if(user){
+                console.log("Duhhh 2");
+                console.log(user);
                 done(null, user);
             }
             else{
+                console.log(user);
+                console.log("Duhhh 3");
                 done(null, false);
             }
         })

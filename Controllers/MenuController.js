@@ -1,6 +1,10 @@
 var express = require('express');
 var MenuItemRouter = express.Router();
 var MenuItem = require('../Models/Menu');
+var passport =require('passport');
+var jwt =require('jwt-simple');
+var config = require('../config');
+var User = require('../Models/User');
 
 MenuItemRouter.use('*',function (req, res, next) {
     console.log('Inside MenuItem Controller!');
@@ -15,17 +19,39 @@ MenuItemRouter
             else{res.json({'status': 'Success', 'msg' : 'We Got What You Were Looking For!',data:MenuItems});}
         });
     })
-    .post('/',function (req, res) {
-        var Itm = req.body;
-
-        MenuItem.addMenuItem(Itm,function (err, MenuItem) {
-            if(err){
-                console.log('Error Saving MenuItem :'+err);
-                res.json({'status': 'Error', 'msg' : 'Error Saving Menu Items!',data:{}});
-            }
-            else{
-            res.json({'status': 'Success', 'msg' : 'Menu Item '+MenuItem.Name+" Saved!",data:MenuItem._id});}
-        });
+    .post('/',
+        passport.authenticate('jwt',
+        {
+            session: false//,
+            // failureRedirect: '/error',
+            // successRedirect: '/home'
+        }),
+        function (req, res, next) {
+                var token = getToken(req.headers);
+                if (token) {
+                    var decoded = jwt.decode(token, config.secret);
+                    User.userExists(decoded, function (err, user) {
+                            if (user.otherDetails.who) {
+                                var Itm = req.body;
+                                MenuItem.addMenuItem(Itm, function (err, MenuItem) {
+                                    if (err) {
+                                        console.log('Error Saving MenuItem :' + err);
+                                        res.json({'status': 'Error', 'msg': 'Error Saving Menu Items!', data: {}});
+                                    }
+                                    else {
+                                        res.json({
+                                            'status': 'Success',
+                                            'msg': 'Menu Item ' + MenuItem.Name + " Saved!",
+                                            data: MenuItem._id
+                                        });
+                                    }
+                                });
+                            }
+                            else {
+                                res.json({'status': 'Error', 'msg': 'Your are not admin to do this!!', data: {}});
+                            }
+                    });
+                }
     });
 
 //All Routes with /:id
@@ -83,3 +109,15 @@ MenuItemRouter
 
 
 module.exports = MenuItemRouter;
+getToken = function (headers) {
+    if (headers && headers.authorization) {
+        var parted = headers.authorization.split(' ');
+        if (parted.length === 2) {
+            return parted[1];
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
+};
