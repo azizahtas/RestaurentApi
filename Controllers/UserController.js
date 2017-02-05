@@ -34,11 +34,19 @@ UserRouter
             if(err){
                 res.json({success: false, msg: err.msg,data:[]});
             }
-            else if(!err && isMatch){
-                user.password="";
-                user.Who = who;
-                var token = jwt.encode(user, config.secret);
-                res.json({success: true, token: 'JWT ' + token});
+            else if(!err && isMatch && who){
+                var newUser = {
+                    email : user.email,
+                    who : who
+                };
+                var token = jwt.encode(newUser, config.secret);
+                res.json({success: true, msg : "Successfully Logged In!", data: token});
+            }
+            else if(!err && !isMatch && !who){
+                res.json({success: false, msg: "Sorry Your password Does not match!",data:[]});
+            }
+            else {
+                res.json({success: false, msg: "Something went wrong!",data:[]});
             }
         });
     }

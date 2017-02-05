@@ -15,19 +15,18 @@ MenuItemRouter.use('*',function (req, res, next) {
 MenuItemRouter
     .get('/',function (req, res) {
         MenuItem.getAllMenuItems(function (err,MenuItems) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Retrieving Menu Items!',data:{}});}
-            else{res.json({'status': 'Success', 'msg' : 'We Got What You Were Looking For!',data:MenuItems});}
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Retrieving Menu Items!',data:{}});}
+            else{res.json({'success': true, 'msg' : 'We Got What You Were Looking For!',data:MenuItems});}
         });
     })
     .post('/',
         passport.authenticate('jwt',
         {
-            session: false//,
-            // failureRedirect: '/error',
-            // successRedirect: '/home'
+            session: false
         }),
         function (req, res, next) {
-                var token = getToken(req.headers);
+                var token = this.getToken(req.headers);
+            console.log(token);
                 if (token) {
                     var decoded = jwt.decode(token, config.secret);
                     User.userExists(decoded, function (err, user) {
@@ -36,11 +35,11 @@ MenuItemRouter
                                 MenuItem.addMenuItem(Itm, function (err, MenuItem) {
                                     if (err) {
                                         console.log('Error Saving MenuItem :' + err);
-                                        res.json({'status': 'Error', 'msg': 'Error Saving Menu Items!', data: {}});
+                                        res.json({'success': false, 'msg': 'Error Saving Menu Items!', data: {}});
                                     }
                                     else {
                                         res.json({
-                                            'status': 'Success',
+                                            'success': true,
                                             'msg': 'Menu Item ' + MenuItem.Name + " Saved!",
                                             data: MenuItem._id
                                         });
@@ -48,7 +47,7 @@ MenuItemRouter
                                 });
                             }
                             else {
-                                res.json({'status': 'Error', 'msg': 'Your are not admin to do this!!', data: {}});
+                                res.json({'success': false, 'msg': 'Your are not admin to do this!!', data: {}});
                             }
                     });
                 }
@@ -59,15 +58,15 @@ MenuItemRouter
     .get('/:_id',function (req, res) {
         var id = req.params['_id'];
         MenuItem.getMenuItemById(id,function (err,data) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Selecting MenuItem with Id : '+id,data:{}});}
-            res.json(data);
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Selecting MenuItem with Id : '+id,data:{}});}
+            res.json({'success': true, 'msg' : 'Found MenuItem with Id : '+id,data:data});
         });
     })
     .delete('/:_id',function (req, res) {
         var id = req.params['_id'];
         MenuItem.deleteMenuItemById(id,function (err,d) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Deleting MenuItem with Id : '+id,data:{}});}
-            else{res.json({'status': 'Success', 'msg' : d.Name + ' Deleted Successfully',data:{}});}
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Deleting MenuItem with Id : '+id,data:{}});}
+            else{res.json({'success': true, 'msg' : d.Name + ' Deleted Successfully',data:{}});}
 
         });
     })
@@ -75,8 +74,8 @@ MenuItemRouter
         var id = req.params['_id'];
         var rec_proj = req.body;
         MenuItem.UpdateMenuItem(id,rec_proj,function (err,MenuItem) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Editing MenuItem with Id : '+id,data:{}});}
-            res.json({'status': 'Success', 'msg' : MenuItem.Name+ ' Updated Successfully',data:{}});
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing MenuItem with Id : '+id,data:{}});}
+            res.json({'success': true, 'msg' : MenuItem.Name+ ' Updated Successfully',data:{}});
         });
     });
 
@@ -87,10 +86,10 @@ MenuItemRouter
                 MenuItem.checkMenuItemByName(name, function (err, data) {
                     if (err) {
                         console.log('Error :' + err);
-                        res.json({'status': 'Error', 'msg': 'Error Checking MenuItem with name : ' + name,data:{}});
+                        res.json({'success': false, 'msg': 'Error Checking MenuItem with name : ' + name,data:{}});
                     }
                     else {
-                        res.json({'status': 'Success', 'msg' : 'We Found What you are Looking For!',data:data});
+                        res.json({'success': true, 'msg' : 'We Found What you are Looking For!',data:data});
                     }
                 });
     })
@@ -99,10 +98,10 @@ MenuItemRouter
         MenuItem.getMenuItems(term, function (err, MenuItem) {
             if (err) {
                 console.log('Error :' + err);
-                res.json({'status': 'Error', 'msg': 'Error Retriving MenuItem!',data:{}});
+                res.json({'success': false, 'msg': 'Error Retrieving MenuItem!',data:{}});
             }
             else {
-                res.json({'status': 'Success', 'msg' : 'We Found What you are Looking For!',data:MenuItem});
+                res.json({'success': true, 'msg' : 'We Found What you are Looking For!',data:MenuItem});
             }
         })
     });

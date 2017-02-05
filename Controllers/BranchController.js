@@ -12,7 +12,7 @@ BranchRouter
     .get('/',function (req, res) {
         Branch.getAllBranches(function (err,Branches) {
             if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Retrieving All Branches!', data:[]});}
-            else{res.json({'status': 'Success', 'msg' : 'We found what your looking for!', data:Branches});}
+            else{res.json({'success': true, 'msg' : 'We found what your looking for!', data:Branches});}
         });
     })
     .post('/',function (req, res) {
@@ -21,10 +21,10 @@ BranchRouter
         Branch.addBranch(Itm,function (err, branch) {
             if(err){
                 console.log('Error Saving Branch :'+err);
-                res.json({'status': 'Error', 'msg' : 'Error Saving Branch!', data:[]});
+                res.json({'success': false, 'msg' : 'Error Saving Branch!', data:[]});
             }
             else{
-            res.json({'status': 'Success', 'msg' : branch.Name + ' Saved Successfully', data:branch._id});}
+            res.json({'success': true, 'msg' : branch.Name + ' Saved Successfully', data:branch._id});}
         });
     });
 
@@ -33,15 +33,15 @@ BranchRouter
     .get('/:_id',function (req, res) {
         var id = req.params['_id'];
         Branch.getBranchById(id,function (err,branches) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Retrieving Branch with Id : '+id, data:[]});}
-            res.json({'status': 'Success', 'msg' : 'We found what your looking for!', data:branches});
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Retrieving Branch with Id : '+id, data:[]});}
+            res.json({'success': true, 'msg' : 'We found what your looking for!', data:branches});
         });
     })
     .delete('/:_id',function (req, res) {
         var id = req.params['_id'];
         Branch.deleteBranchById(id,function (err,branch) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Deleting Branch with Id : '+id, data:[]});}
-            else{res.json({'status': 'Success', 'msg' : branch.Name + ' Deleted Successfully',data:[]});}
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Deleting Branch with Id : '+id, data:[]});}
+            else{res.json({'success': true, 'msg' : branch.Name + ' Deleted Successfully',data:[]});}
 
         });
     })
@@ -49,8 +49,8 @@ BranchRouter
         var id = req.params['_id'];
         var rec_proj = req.body;
         Branch.UpdateBranch(id,rec_proj,function (err,branch) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Editing Branch with Id : '+id,data:[]});}
-            res.json({'status': 'Success', 'msg' : branch.Name+ ' Updated Successfully',data:branch._id});
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing Branch with Id : '+id,data:[]});}
+            res.json({'success': true, 'msg' : branch.Name+ ' Updated Successfully',data:branch._id});
         });
     });
 //Table Routes
@@ -61,10 +61,10 @@ BranchRouter
         Branch.addTable(id,table, function (err, data) {
             if (err) {
                 console.log('Error :' + err);
-                res.json({'status': 'Error', 'msg': 'Error Saving Table!',data:[]});
+                res.json({'success': false, 'msg': 'Error Saving Table!',data:[]});
             }
             else {
-                res.json({'status': 'Success', 'msg': 'Table Created Successfully',data:data.Tables});
+                res.json({'success': true, 'msg': 'Table Created Successfully',data:data.Tables});
             }
         })
     })
@@ -74,10 +74,10 @@ BranchRouter
         Branch.editTable(id,table, function (err, data) {
             if (err) {
                 console.log('Error :' + err);
-                res.json({'status': 'Error', 'msg': 'Error Saving Table!',data:[]});
+                res.json({'success': false, 'msg': 'Error Saving Table!',data:[]});
             }
             else {
-                res.json({'status': 'Success', 'msg': 'Table Edited Successfully',data:data.Tables});
+                res.json({'success': true, 'msg': 'Table Edited Successfully',data:data.Tables});
             }
         })
     })
@@ -87,10 +87,10 @@ BranchRouter
         Branch.deleteTable(id,tableId, function (err, data) {
             if (err) {
                 console.log('Error :' + err);
-                res.json({'status': 'Error', 'msg': 'Error Saving Table!',data:[]});
+                res.json({'success': false, 'msg': 'Error Saving Table!',data:[]});
             }
             else {
-                res.json({'status': 'Success', 'msg': 'Table Deleted Successfully',data:data.Tables});
+                res.json({'success': true, 'msg': 'Table Deleted Successfully',data:data.Tables});
             }
         })
     });
@@ -102,10 +102,10 @@ BranchRouter
             Branch.checkBranchByName(name, function (err, branch) {
                 if (err) {
                     console.log('Error :' + err);
-                    res.json({'status': 'Error', 'msg': 'Error Checking Branch with name : ' + name,data:[]});
+                    res.json({'success': false, 'msg': 'Error Checking Branch with name : ' + name,data:[]});
                 }
                 else {
-                    res.json({'status': 'Success', 'msg': 'We found what your looking for!',data:branch});
+                    res.json({'success': true, 'msg': 'We found what your looking for!',data:branch});
                 }
             });
     })
@@ -114,10 +114,10 @@ BranchRouter
         Branch.getBranches(term, function (err, branches) {
             if (err) {
                 console.log('Error :' + err);
-                res.json({'status': 'Error', 'msg': 'Error Retrieving Branch!',data:[]});
+                res.json({'success': false, 'msg': 'Error Retrieving Branch!',data:[]});
             }
             else {
-                res.json({'status': 'Success', 'msg': 'We found what your looking for!',data:branches});
+                res.json({'success': true, 'msg': 'We found what your looking for!',data:branches});
             }
         })
     });

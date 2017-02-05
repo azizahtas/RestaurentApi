@@ -11,8 +11,8 @@ CategoryRouter.use('*',function (req, res, next) {
 CategoryRouter
     .get('/',function (req, res) {
         Category.getAllCategories(function (err,Categories) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Retrieving All Categories!',data:{}});}
-            else{res.json({'status': 'Success', 'msg' : 'We Found What your looking For!',data:Categories});}
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Retrieving All Categories!',data:[]});}
+            else{res.json({'success': true, 'msg' : 'We Found What your looking For!',data:Categories});}
         });
     })
     .post('/',function (req, res) {
@@ -21,10 +21,10 @@ CategoryRouter
         Category.addCategory(Itm,function (err, Category) {
             if(err){
                 console.log('Error Saving Category :'+err);
-                res.json({'status': 'Error', 'msg' : 'Error Saving Category!'});
+                res.json({'success': false, 'msg' : 'Error Saving Category!', data:[]});
             }
             else{
-            res.json({'status': 'Success', 'msg' : Category.Name + ' Saved Successfully'});}
+            res.json({'success': true, 'msg' : Category.Name + ' Saved Successfully', data:[]});}
         });
     });
 
@@ -33,15 +33,15 @@ CategoryRouter
     .get('/:_id',function (req, res) {
         var id = req.params['_id'];
         Category.getCategoryById(id,function (err,data) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Selecting Category with Id : '+id});}
-            res.json(data);
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Selecting Category with Id : '+id});}
+            res.json({'success': true, 'msg' : 'Found Category with Id : '+id,data:data});
         });
     })
     .delete('/:_id',function (req, res) {
         var id = req.params['_id'];
         Category.deleteCategoryById(id,function (err,data) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Deleting Category with Id : '+id});}
-            else{res.json({'status': 'Success', 'msg' : data.Name + ' Deleted Successfully'});}
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Deleting Category with Id : '+id,data:[]});}
+            else{res.json({'success': true, 'msg' : data.Name + ' Deleted Successfully',data:[]});}
 
         });
     })
@@ -49,8 +49,8 @@ CategoryRouter
         var id = req.params['_id'];
         var rec_proj = req.body;
         Category.UpdateCategory(id,rec_proj,function (err,Category) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Editing Category with Id : '+id});}
-            res.json({'status': 'Success', 'msg' : Category.Name+ ' Updated Successfully'});
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing Category with Id : '+id,data:[]});}
+            res.json({'success': true, 'msg' : Category.Name+ ' Updated Successfully',data:[]});
         });
     });
 
@@ -64,10 +64,10 @@ CategoryRouter
                 Category.checkCategoryByName(name, function (err, data) {
                     if (err) {
                         console.log('Error :' + err);
-                        res.json({'status': 'Error', 'msg': 'Error Checking Category with name : ' + name});
+                        res.json({'success': false, 'msg': 'Error Checking Category with name : ' + name,data:[]});
                     }
                     else {
-                        res.json(data);
+                        res.json({'success': true, 'msg': 'Found category with name: ' + name,data:data});
                     }
                 });
             }
@@ -77,21 +77,12 @@ CategoryRouter
         Category.getCategories(term, function (err, Category) {
             if (err) {
                 console.log('Error :' + err);
-                res.json({'status': 'Error', 'msg': 'Error Retriving Category!'});
+                res.json({'success': false, 'msg': 'Error Retriving Category!',data:[]});
             }
             else {
-                res.json(Category);
+                res.json({'success': true, 'msg': 'Found what your looking for!',data:Category});
             }
         })
-    })
-    .put('/u/Qty/:_Id',function (req, res) {
-        var id = req.params['_Id'];
-        var Qty = req.body;
-
-        Category.updateQuantity(id,Qty,function (err,Itm) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Editing Category Quantity!'});}
-            else{res.json({'status': 'Success', 'msg' : Itm.Name+' Quantity Updated Successfully!'});}
-        });
     });
 
 module.exports = CategoryRouter;

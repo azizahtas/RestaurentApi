@@ -28,8 +28,10 @@ var userSchema = mongoose.Schema({
         name         : String
     },
     otherDetails :{
-        who : Boolean
-
+        who : {type : Boolean, required : true },
+        fname : {type : String, required : true },
+        lname : {type : String, required : true },
+        phone:{type : String, required : true }
     }
 
 },{collection : 'Users'});
@@ -73,7 +75,7 @@ module.exports.login = function(user,callback){
 
             if(usr.validPassword(user.password)){
                 console.log("Duhh3");
-                callback(null,true,user.who);
+                callback(null,true,usr.otherDetails.who);
             }
             else {
                 console.log("Duhh4");

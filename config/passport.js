@@ -14,18 +14,12 @@ module.exports = function(passport) {
         console.log(jwt_payload);
         User.findOne({"local.email": jwt_payload.email}, function (err, user) {
             if(err){
-                console.log("Duhh 1");
-                console.log(user);
                 return done(err,false);
             }
             if(user){
-                console.log("Duhhh 2");
-                console.log(user);
                 done(null, user);
             }
             else{
-                console.log(user);
-                console.log("Duhhh 3");
                 done(null, false);
             }
         })
