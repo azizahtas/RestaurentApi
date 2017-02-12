@@ -37,7 +37,6 @@ UserRouter
             }
             else{
                 var newUser = {
-                    email : user.email,
                     who : usr.otherDetails.who,
                     _id : usr._id,
                     fname : usr.otherDetails.fname,
@@ -60,7 +59,6 @@ UserRouter
             }
             else if(!err && isMatch && usr){
                 var newUser = {
-                    email : user.email,
                     who : usr.otherDetails.who,
                     _id : usr._id,
                     fname : usr.otherDetails.fname,

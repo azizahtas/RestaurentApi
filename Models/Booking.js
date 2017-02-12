@@ -9,7 +9,7 @@ var BookingSchema = new Schema({
     _UserId : {type : String, required : true },
 
     Date : {type : Date, required: true },
-    Time : {type : Number, required: true },
+    _TimeSlotId : {type : String, required: true },
     NoOfPersons : {type : Number, required: true },
     Orders : {
         _MenuId : String

@@ -39,13 +39,13 @@ BookingRouter
             var decoded = jwt.decode(token, config.secret);
             User.userExists(decoded, function (err, user) {
                 var booking = req.body;
-                Booking.addBooking(Itm,function (err, booking) {
+                Booking.addBooking(booking,function (err, booking) {
                     if(err){
                         console.log('Error Saving Booking :'+err);
-                        res.json({'status': 'Error', 'msg' : 'Error Saving Booking!'});
+                        res.json({'success': false, 'msg' : 'Error Saving Booking!'});
                     }
                     else{
-                    res.json({'status': 'Success', 'msg' : Booking.Name + ' Saved Successfully'});}
+                    res.json({'success': true, 'msg' :'Booking Saved Successfully'});}
                 });
             });
         }
