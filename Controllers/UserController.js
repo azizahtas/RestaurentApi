@@ -10,17 +10,41 @@ UserRouter.use('*',function (req, res, next) {
 });
 
 UserRouter
+    .get('/checkUser/:_email',function (req, res) {
+        var email = req.params['_email'];
+        User.userExistsEmail(email,function (err,usr) {
+            if(err){
+                res.json({success: false, msg: 'Something Went Wrong', data:[]});
+            }
+            else{
+                if(usr){
+                    res.json({success: true, msg: 'User Exists', data:[]});
+                }
+                else{
+                    res.json({success: false, msg: 'User Does not Exist', data:[]});
+                }
+            }
+        })
+    })
     .post('/signup', function(req, res) {
-    if (!req.body.email || !req.body.password) {
-        res.json({success: false, msg: 'Please pass email and password.'});
+    if (!req.body.local.email || !req.body.local.password) {
+        res.json({success: false, msg: 'Please pass email and password.', data:[]});
     } else {
         var user = req.body;
         User.addUser(user,function (err,usr) {
             if (err) {
-                res.json({success: false, msg: 'Username already exists.',data:[]});
+                res.json({success: false, msg: 'Email already exists.',data:[]});
             }
             else{
-            res.json({success: true, msg: 'Successful created new user.',data:[]});
+                var newUser = {
+                    email : user.email,
+                    who : usr.otherDetails.who,
+                    _id : usr._id,
+                    fname : usr.otherDetails.fname,
+                    lname : usr.otherDetails.lname
+                };
+                var token = jwt.encode(newUser, config.secret);
+                res.json({success: true, msg : "Successfully Logged In!", data: token});
             }
         });
     }
@@ -30,19 +54,22 @@ UserRouter
     } else {
         var user = req.body;
 
-        User.login(user,function (err,isMatch,who) {
+        User.login(user,function (err,isMatch,usr) {
             if(err){
                 res.json({success: false, msg: err.msg,data:[]});
             }
-            else if(!err && isMatch && who){
+            else if(!err && isMatch && usr){
                 var newUser = {
                     email : user.email,
-                    who : who
+                    who : usr.otherDetails.who,
+                    _id : usr._id,
+                    fname : usr.otherDetails.fname,
+                    lname : usr.otherDetails.lname
                 };
                 var token = jwt.encode(newUser, config.secret);
                 res.json({success: true, msg : "Successfully Logged In!", data: token});
             }
-            else if(!err && !isMatch && !who){
+            else if(!err && !isMatch && !usr){
                 res.json({success: false, msg: "Sorry Your password Does not match!",data:[]});
             }
             else {

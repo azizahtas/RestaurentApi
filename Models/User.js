@@ -50,15 +50,18 @@ userSchema.methods.validPassword = function(password) {
 var User = module.exports  = mongoose.model('User', userSchema,'Users');
 
 module.exports.addUser = function(user,callback){
-    User.findOne({"local.email":user.email},{},function (err, usr) {
+    User.findOne({"local.email":user.local.email},{},function (err, usr) {
         if(usr){
             callback({error:"User Already Exists"});
         }
         else {
             var newUser = new User(user);
-            newUser.local.email = user.email;
-            newUser.local.password = newUser.generateHash(user.password);
-            newUser.otherDetails.who = user.who;
+            newUser.local.email = user.local.email;
+            newUser.local.password = newUser.generateHash(user.local.password);
+            newUser.otherDetails.who = user.otherDetails.who;
+            newUser.otherDetails.fname = user.otherDetails.fname;
+            newUser.otherDetails.lname = user.otherDetails.lname;
+            newUser.otherDetails.phone = user.otherDetails.phone;
             newUser.save(callback);
         }
     });
@@ -75,7 +78,7 @@ module.exports.login = function(user,callback){
 
             if(usr.validPassword(user.password)){
                 console.log("Duhh3");
-                callback(null,true,usr.otherDetails.who);
+                callback(null,true,usr);
             }
             else {
                 console.log("Duhh4");
@@ -83,10 +86,13 @@ module.exports.login = function(user,callback){
             }
         }
         else if(!usr) {
-            callback({msg:'Authentication Failed! UserName does not exist!'},false,null);
+            callback({msg:'Authentication Failed! Email does not exist!'},false,null);
         }
     });
 };
 module.exports.userExists = function(user,callback){
     User.findOne({"local.email":user.email},{},callback);
+};
+module.exports.userExistsEmail = function(email,callback){
+    User.findOne({"local.email":email},{},callback);
 };

@@ -1,6 +1,10 @@
 var express = require('express');
 var BookingRouter = express.Router();
-var Booking = require('../Models/Menu');
+var Booking = require('../Models/Booking');
+var passport =require('passport');
+var jwt =require('jwt-simple');
+var config = require('../config');
+var User = require('../Models/User');
 
 BookingRouter.use('*',function (req, res, next) {
     console.log('Inside Booking Controller!');
@@ -9,23 +13,42 @@ BookingRouter.use('*',function (req, res, next) {
 
 //All Routes with /
 BookingRouter
-    .get('/',function (req, res) {
-        Booking.getAllBookings(function (err,Bookings) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Retriving All Bookings!'});}
-            else{res.json(Bookings);}
-        });
+    .get('/',passport.authenticate('jwt',
+        {
+            session: false
+        }),
+        function (req, res) {
+            var token = this.getToken(req.headers);
+            if (token) {
+            var decoded = jwt.decode(token, config.secret);
+            User.userExists(decoded, function (err, user) {
+                Booking.getAllBookings(function (err,Bookings) {
+                    if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Retriving All Bookings!', data:[]});}
+                    else{res.json({'success': false, 'msg' : 'Error Retriving All Bookings!', data:Bookings});}
+                });
+            });
+        }
     })
-    .post('/',function (req, res) {
-        var Itm = req.body;
-
-        Booking.addBooking(Itm,function (err, Booking) {
-            if(err){
-                console.log('Error Saving Booking :'+err);
-                res.json({'status': 'Error', 'msg' : 'Error Saving Booking!'});
-            }
-            else{
-            res.json({'status': 'Success', 'msg' : Booking.Name + ' Saved Successfully'});}
-        });
+    .post('/',passport.authenticate('jwt',
+        {
+            session: false
+        }),
+        function (req, res) {
+            var token = this.getToken(req.headers);
+            if (token) {
+            var decoded = jwt.decode(token, config.secret);
+            User.userExists(decoded, function (err, user) {
+                var booking = req.body;
+                Booking.addBooking(Itm,function (err, booking) {
+                    if(err){
+                        console.log('Error Saving Booking :'+err);
+                        res.json({'status': 'Error', 'msg' : 'Error Saving Booking!'});
+                    }
+                    else{
+                    res.json({'status': 'Success', 'msg' : Booking.Name + ' Saved Successfully'});}
+                });
+            });
+        }
     });
 
 //All Routes with /:id

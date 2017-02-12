@@ -26,7 +26,6 @@ MenuItemRouter
         }),
         function (req, res, next) {
                 var token = this.getToken(req.headers);
-            console.log(token);
                 if (token) {
                     var decoded = jwt.decode(token, config.secret);
                     User.userExists(decoded, function (err, user) {
@@ -62,21 +61,54 @@ MenuItemRouter
             res.json({'success': true, 'msg' : 'Found MenuItem with Id : '+id,data:data});
         });
     })
-    .delete('/:_id',function (req, res) {
-        var id = req.params['_id'];
-        MenuItem.deleteMenuItemById(id,function (err,d) {
-            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Deleting MenuItem with Id : '+id,data:{}});}
-            else{res.json({'success': true, 'msg' : d.Name + ' Deleted Successfully',data:{}});}
+    .delete('/:_id',passport.authenticate('jwt',
+        {
+            session: false
+        }),function (req, res, next) {
+        var token = this.getToken(req.headers);
+        if (token) {
+            var decoded = jwt.decode(token, config.secret);
+            User.userExists(decoded, function (err, user) {
+                if (user.otherDetails.who) {
+                    var id = req.params['_id'];
+                    MenuItem.deleteMenuItemById(id, function (err, d) {
+                        if (err) {
+                            console.log('Error :' + err);
+                            res.json({'success': false, 'msg': 'Error Deleting MenuItem with Id : ' + id, data: {}});
+                        }
+                        else {
+                            res.json({'success': true, 'msg': d.Name + ' Deleted Successfully', data: {}});
+                        }
 
-        });
+                    });
+                }
+                else {
+                    res.json({'success': false, 'msg': 'Your are not admin to do this!!', data: {}});
+                }
+            });
+        }
     })
-    .put('/:_id',function (req, res) {
-        var id = req.params['_id'];
-        var rec_proj = req.body;
-        MenuItem.UpdateMenuItem(id,rec_proj,function (err,MenuItem) {
-            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing MenuItem with Id : '+id,data:{}});}
-            res.json({'success': true, 'msg' : MenuItem.Name+ ' Updated Successfully',data:{}});
-        });
+    .put('/:_id',passport.authenticate('jwt',
+        {
+            session: false
+        }),function (req, res, next) {
+        var token = this.getToken(req.headers);
+        if (token) {
+            var decoded = jwt.decode(token, config.secret);
+            User.userExists(decoded, function (err, user) {
+                if (user.otherDetails.who) {
+                    var id = req.params['_id'];
+                    var rec_proj = req.body;
+                    MenuItem.UpdateMenuItem(id,rec_proj,function (err,MenuItem) {
+                        if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing MenuItem with Id : '+id,data:{}});}
+                        res.json({'success': true, 'msg' : MenuItem.Name+ ' Updated Successfully',data:{}});
+                    });
+                }
+                else {
+                    res.json({'success': false, 'msg': 'Your are not admin to do this!!', data: {}});
+                }
+            });
+        }
     });
 
 //Misc Routes
