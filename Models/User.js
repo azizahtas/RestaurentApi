@@ -29,9 +29,12 @@ var userSchema = mongoose.Schema({
     },
     otherDetails :{
         who : {type : Boolean, required : true },
+        bm : {type : Boolean, required : true },
         fname : {type : String, required : true },
+        bmme : {type : String, required : true },
         lname : {type : String, required : true },
-        phone:{type : String, required : true }
+        phone:{type : String, required : true },
+        _branchId : String
     }
 
 },{collection : 'Users'});
@@ -58,7 +61,8 @@ module.exports.addUser = function(user,callback){
             var newUser = new User(user);
             newUser.local.email = user.local.email;
             newUser.local.password = newUser.generateHash(user.local.password);
-            newUser.otherDetails.who = user.otherDetails.who;
+            newUser.otherDetails.who = false;
+            newUser.otherDetails.bm = user.otherDetails.bm;
             newUser.otherDetails.fname = user.otherDetails.fname;
             newUser.otherDetails.lname = user.otherDetails.lname;
             newUser.otherDetails.phone = user.otherDetails.phone;
