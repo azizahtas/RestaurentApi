@@ -1,8 +1,9 @@
 var express = require('express');
 var UserRouter = express.Router();
+var passport =require('passport');
+var jwt =require('jwt-simple');
+var config = require('../config');
 var User = require('../Models/User');
-var jwt = require('jwt-simple');
-var config = require("../config");
 
 UserRouter.use('*', function (req, res, next) {
     console.log('Inside User Controller!');
@@ -81,4 +82,42 @@ UserRouter
         }
     })
     ;
+
+UserRouter.get('/',passport.authenticate('jwt',
+        {
+            session: false
+        }),function (req, res, next) {
+        var token = this.getToken(req.headers);
+        if (token) {
+            var decoded = jwt.decode(token, config.secret);
+            User.userExistsId(decoded, function (err, user) {
+                if(user){
+                    if (user.otherDetails.who || user.otherDetails.bm) {
+                        User.getAllUsers(function (err, users) {
+                            if (err) {
+                                console.log('Error Reteriving Users! :' + err);
+                                res.json({ 'success': false, 'msg': 'Error Reteriving Users!!', data: [] });
+                            }
+                            else {
+                                var newUsers = [];
+                                var singleUser;
+                                for (var i = 0; i < users.length; i++) {
+                                    singleUser._id = users[i]._id;
+                                    newUsers.push(singleUser);
+                                }
+                                res.json({ 'success': true, 'msg': 'We Found what your looking for!', data: newUsers });
+                            }
+                        });
+                    }
+                    else {
+                        res.json({ 'success': false, 'msg': 'Your are not admin to do this!!', data: [] });
+                    }
+                }
+                else{
+                    res.json({ 'success': false, 'msg': 'User Doesnot Exist!!', data: [] });
+                }
+                    
+            });
+        }
+    });
 module.exports = UserRouter;

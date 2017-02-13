@@ -28,7 +28,7 @@ MenuItemRouter
                 var token = this.getToken(req.headers);
                 if (token) {
                     var decoded = jwt.decode(token, config.secret);
-                    User.userExists(decoded, function (err, user) {
+                    User.userExistsId(decoded, function (err, user) {
                             if (user.otherDetails.who) {
                                 var Itm = req.body;
                                 MenuItem.addMenuItem(Itm, function (err, MenuItem) {
@@ -68,7 +68,7 @@ MenuItemRouter
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 if (user.otherDetails.who) {
                     var id = req.params['_id'];
                     MenuItem.deleteMenuItemById(id, function (err, d) {
@@ -95,7 +95,7 @@ MenuItemRouter
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 if (user.otherDetails.who) {
                     var id = req.params['_id'];
                     var rec_proj = req.body;

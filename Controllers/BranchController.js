@@ -26,7 +26,7 @@ BranchRouter
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 if (user.otherDetails.who) {
                     var Itm = req.body;
                     Branch.addBranch(Itm,function (err, branch) {
@@ -61,7 +61,7 @@ BranchRouter
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 if (user.otherDetails.who) {
                     var id = req.params['_id'];
                     Branch.deleteBranchById(id,function (err,branch) {
@@ -82,7 +82,7 @@ BranchRouter
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 if (user.otherDetails.who) {
                     var id = req.params['_id'];
                     var rec_proj = req.body;
@@ -106,7 +106,7 @@ BranchRouter
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 if (user.otherDetails.who) {
                     var id = req.params['_id'];
                     var table = req.body;
@@ -133,7 +133,7 @@ BranchRouter
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 if (user.otherDetails.who) {
                     var id = req.params['_id'];
                     var table = req.body;
@@ -160,7 +160,7 @@ BranchRouter
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 if (user.otherDetails.who) {
         var id = req.params['_id'];
         var tableId = req.params['_tableId'];

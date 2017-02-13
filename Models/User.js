@@ -31,7 +31,6 @@ var userSchema = mongoose.Schema({
         who : {type : Boolean, required : true },
         bm : {type : Boolean, required : true },
         fname : {type : String, required : true },
-        bmme : {type : String, required : true },
         lname : {type : String, required : true },
         phone:{type : String, required : true },
         _branchId : String
@@ -94,9 +93,12 @@ module.exports.login = function(user,callback){
         }
     });
 };
-module.exports.userExists = function(user,callback){
-    User.findOne({"local.email":user.email},{},callback);
+module.exports.userExistsId = function(user,callback){
+    User.findOne({"_id":user._id},{},callback);
 };
 module.exports.userExistsEmail = function(email,callback){
     User.findOne({"local.email":email},{},callback);
+};
+module.exports.getAllUsers = function(callback){
+    User.find({"otherDetails.who":false},callback);
 };

@@ -21,7 +21,7 @@ BookingRouter
             var token = this.getToken(req.headers);
             if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 Booking.getAllBookings(function (err,Bookings) {
                     if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Retriving All Bookings!', data:[]});}
                     else{res.json({'success': false, 'msg' : 'Error Retriving All Bookings!', data:Bookings});}
@@ -37,7 +37,7 @@ BookingRouter
             var token = this.getToken(req.headers);
             if (token) {
             var decoded = jwt.decode(token, config.secret);
-            User.userExists(decoded, function (err, user) {
+            User.userExistsId(decoded, function (err, user) {
                 var booking = req.body;
                 Booking.addBooking(booking,function (err, booking) {
                     if(err){
