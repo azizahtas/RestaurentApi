@@ -89,7 +89,7 @@ BranchRouter
                     var rec_proj = req.body;
                     Branch.UpdateBranch(id,rec_proj,function (err,branch) {
                         if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing Branch with Id : '+id,data:[]});}
-                        res.json({'success': true, 'msg' : branch.Name+ ' Updated Successfully',data:branch._id});
+                        else{res.json({'success': true, 'msg' : branch.Name+ ' Updated Successfully',data:branch._id});}
                     });
                 }
                 else {
@@ -108,7 +108,7 @@ BranchRouter
         if (token) {
             var decoded = jwt.decode(token, config.secret);
             User.userExistsId(decoded, function (err, user) {
-                if (user.otherDetails.who) {
+                if (user.otherDetails.who || (user.otherDetails.bm && user.otherDetails._branchId == id)) {
                     var id = req.params['_id'];
                     var table = req.body;
                     Branch.addTable(id,table, function (err, data) {
@@ -135,7 +135,7 @@ BranchRouter
         if (token) {
             var decoded = jwt.decode(token, config.secret);
             User.userExistsId(decoded, function (err, user) {
-                if (user.otherDetails.who ) {
+                if (user.otherDetails.who || (user.otherDetails.bm && user.otherDetails._branchId == id)) {
                     var id = req.params['_id'];
                     var table = req.body;
                     Branch.editTable(id,table, function (err, data) {
@@ -162,7 +162,7 @@ BranchRouter
         if (token) {
             var decoded = jwt.decode(token, config.secret);
             User.userExistsId(decoded, function (err, user) {
-                if (user.otherDetails.who) {
+                if (user.otherDetails.who || (user.otherDetails.bm && user.otherDetails._branchId == id)) {
         var id = req.params['_id'];
         var tableId = req.params['_tableId'];
         Branch.deleteTable(id,tableId, function (err, data) {

@@ -54,7 +54,8 @@ var User = module.exports  = mongoose.model('User', userSchema,'Users');
 module.exports.addUser = function(user,callback){
     User.findOne({"local.email":user.local.email},{},function (err, usr) {
         if(usr){
-            callback({error:"User Already Exists"});
+            callback({msg:"User Already Exists"});
+            console.log("User Exists");
         }
         else {
             var newUser = new User(user);
@@ -68,6 +69,27 @@ module.exports.addUser = function(user,callback){
             newUser.save(callback);
         }
     });
+};
+
+module.exports.updateUser = function(Id,otherDetails,callback){
+    User.findById(Id,{},function (err, usr) {
+        if(usr){
+            var newUser = new User(usr);
+            newUser.otherDetails.who = false;
+            newUser.otherDetails.bm = otherDetails.bm;
+            newUser.otherDetails.fname = otherDetails.fname;
+            newUser.otherDetails.lname = otherDetails.lname;
+            newUser.otherDetails.phone = otherDetails.phone;
+            newUser.otherDetails._branchId = otherDetails._branchId;
+            newUser.save(callback);
+        }
+        else {
+             callback({msg:"User Doesnot Exist"});
+        }
+    });
+};
+module.exports.deleteUserById = function(Id,callback){
+    User.findByIdAndRemove(Id,{},callback);
 };
 
 module.exports.login = function(user,callback){

@@ -1,7 +1,7 @@
 var express = require('express');
 var UserRouter = express.Router();
-var passport =require('passport');
-var jwt =require('jwt-simple');
+var passport = require('passport');
+var jwt = require('jwt-simple');
 var config = require('../config');
 var User = require('../Models/User');
 
@@ -34,16 +34,17 @@ UserRouter
             var user = req.body;
             User.addUser(user, function (err, usr) {
                 if (err) {
+                    console.log(err);
                     res.json({ success: false, msg: 'Email already exists.', data: [] });
                 }
                 else {
                     var newUser = {
                         who: usr.otherDetails.who,
-                        bm : usr.otherDetails.bm,
+                        bm: usr.otherDetails.bm,
                         _id: usr._id,
                         fname: usr.otherDetails.fname,
                         lname: usr.otherDetails.lname,
-                        _branchId : usr.otherDetails._branchId
+                        _branchId: usr.otherDetails._branchId
                     };
                     var token = jwt.encode(newUser, config.secret);
                     res.json({ success: true, msg: "Successfully Logged In!", data: token });
@@ -63,11 +64,11 @@ UserRouter
                 else if (!err && isMatch && usr) {
                     var newUser = {
                         who: usr.otherDetails.who,
-                        bm : usr.otherDetails.bm,
+                        bm: usr.otherDetails.bm,
                         _id: usr._id,
                         fname: usr.otherDetails.fname,
                         lname: usr.otherDetails.lname,
-                        _branchId : usr.otherDetails._branchId
+                        _branchId: usr.otherDetails._branchId
                     };
                     var token = jwt.encode(newUser, config.secret);
                     res.json({ success: true, msg: "Successfully Logged In!", data: token });
@@ -83,15 +84,16 @@ UserRouter
     })
     ;
 
-UserRouter.get('/',passport.authenticate('jwt',
-        {
-            session: false
-        }),function (req, res, next) {
+UserRouter
+.get('/', passport.authenticate('jwt',
+    {
+        session: false
+    }), function (req, res, next) {
         var token = this.getToken(req.headers);
         if (token) {
             var decoded = jwt.decode(token, config.secret);
             User.userExistsId(decoded, function (err, user) {
-                if(user){
+                if (user) {
                     if (user.otherDetails.who || user.otherDetails.bm) {
                         User.getAllUsers(function (err, users) {
                             if (err) {
@@ -100,10 +102,15 @@ UserRouter.get('/',passport.authenticate('jwt',
                             }
                             else {
                                 var newUsers = [];
+                                var Ids = [];
                                 for (var i = 0; i < users.length; i++) {
                                     newUsers.push(users[i].otherDetails);
                                 }
-                                res.json({ 'success': true, 'msg': 'We Found what your looking for!', data: newUsers });
+                                for (var i = 0; i < users.length; i++) {
+                                    Ids.push(users[i]._id);
+                                }
+
+                                res.json({ 'success': true, 'msg': 'We Found what your looking for!', data: { Users: newUsers, Ids: Ids } });
                             }
                         });
                     }
@@ -111,10 +118,55 @@ UserRouter.get('/',passport.authenticate('jwt',
                         res.json({ 'success': false, 'msg': 'Your are not admin to do this!!', data: [] });
                     }
                 }
-                else{
+                else {
                     res.json({ 'success': false, 'msg': 'User Doesnot Exist!!', data: [] });
                 }
-                    
+
+            });
+        }
+    })
+    .put('/:_id',passport.authenticate('jwt',
+        {
+            session: false
+        }),function (req, res) {
+        var token = this.getToken(req.headers);
+        if (token) {
+            var decoded = jwt.decode(token, config.secret);
+            User.userExistsId(decoded, function (err, user) {
+                var id = req.params['_id'];
+                if (user.otherDetails.who) {
+                    var userDetails = req.body;
+                    User.updateUser(id,userDetails,function (err,newusr) {
+                        if(err){console.log('Error :'+err.msg); res.json({'success': false, 'msg' : 'Error Editing newusr with Id : '+id+ 'Error :'+err.msg,data:[]});}
+                        else{
+                            res.json({'success': true, 'msg' :  ' Updated Successfully',data:user._id});
+                        } 
+                    });
+                }
+                else {
+                    res.json({'success': false, 'msg': 'Your are not admin to do this!!', data: {}});
+                }
+            });
+        }
+    })
+        .delete('/:_id',passport.authenticate('jwt',
+        {
+            session: false
+        }),function (req, res, next) {
+        var token = this.getToken(req.headers);
+        if (token) {
+            var decoded = jwt.decode(token, config.secret);
+            User.userExistsId(decoded, function (err, user) {
+                if (user.otherDetails.who) {
+                    var id = req.params['_id'];
+                    User.deleteUserById(id,function (err,user) {
+                        if(err){console.log('Error :'+err.msg); res.json({'success': false, 'msg' : 'Error Deleting User with Id : '+id+ 'Error :'+err.msg, data:[]});}
+                        else{res.json({'success': true, 'msg' : user.Name + ' Deleted Successfully',data:[]});}
+                });
+                }
+                else {
+                    res.json({'success': false, 'msg': 'Your are not admin to do this!!', data: {}});
+                }
             });
         }
     });
