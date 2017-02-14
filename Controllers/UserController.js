@@ -100,10 +100,8 @@ UserRouter.get('/',passport.authenticate('jwt',
                             }
                             else {
                                 var newUsers = [];
-                                var singleUser;
                                 for (var i = 0; i < users.length; i++) {
-                                    singleUser._id = users[i]._id;
-                                    newUsers.push(singleUser);
+                                    newUsers.push(users[i].otherDetails);
                                 }
                                 res.json({ 'success': true, 'msg': 'We Found what your looking for!', data: newUsers });
                             }

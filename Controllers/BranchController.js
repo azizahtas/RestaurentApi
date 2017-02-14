@@ -83,8 +83,9 @@ BranchRouter
         if (token) {
             var decoded = jwt.decode(token, config.secret);
             User.userExistsId(decoded, function (err, user) {
-                if (user.otherDetails.who) {
-                    var id = req.params['_id'];
+                var id = req.params['_id'];
+                if (user.otherDetails.who || (user.otherDetails.bm && user.otherDetails._branchId == id)) {
+                    
                     var rec_proj = req.body;
                     Branch.UpdateBranch(id,rec_proj,function (err,branch) {
                         if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing Branch with Id : '+id,data:[]});}
@@ -134,7 +135,7 @@ BranchRouter
         if (token) {
             var decoded = jwt.decode(token, config.secret);
             User.userExistsId(decoded, function (err, user) {
-                if (user.otherDetails.who) {
+                if (user.otherDetails.who ) {
                     var id = req.params['_id'];
                     var table = req.body;
                     Branch.editTable(id,table, function (err, data) {
