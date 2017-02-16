@@ -78,43 +78,87 @@ BookingRouter
     });
 
 //Misc Routes
+// Routs With /u/Term
 BookingRouter
-    .get('/check/:_term',function (req, res) {
+    .get('/u/:_term',passport.authenticate('jwt',
+        {
+            session: false
+        }),function (req, res) {
             var name = req.params['_term'];
-            if(name=="default"){
-                res.json({_id:"default"});
-            }else {
-                Booking.checkBookingByName(name, function (err, data) {
+            if(name=="Canceled"){
+                Booking.getBookingsByCanceled(true, function (err, bookings) {
                     if (err) {
                         console.log('Error :' + err);
-                        res.json({'status': 'Error', 'msg': 'Error Checking Booking with name : ' + name});
+                        res.json({'success': false, 'msg': 'Error While reteriving Canceled Bookings!', data:[]});
                     }
                     else {
-                        res.json(data);
+                         res.json({'success': true, 'msg': 'We Found All The Canceled Bookings!', data:bookings});
                     }
                 });
             }
-    })
-    .get('/u/Search/:_term',function (req, res) {
-        var term = req.params['_term'];
-        Booking.getBookings(term, function (err, Booking) {
-            if (err) {
-                console.log('Error :' + err);
-                res.json({'status': 'Error', 'msg': 'Error Retriving Booking!'});
+            else if(name=="NotCanceled"){
+                Booking.getBookingsByCanceled(false, function (err, bookings) {
+                    if (err) {
+                        console.log('Error :' + err);
+                        res.json({'success': false, 'msg': 'Error While reteriving Not Canceled Bookings!', data:[]});
+                    }
+                    else {
+                         res.json({'success': true, 'msg': 'We Found Bookings Not Canceled', data:bookings});
+                    }
+                });
             }
             else {
-                res.json(Booking);
+                res.json({'success': false, 'msg': 'Wrong Path!', data : []});
+               
             }
-        })
     })
-    .put('/u/Qty/:_Id',function (req, res) {
-        var id = req.params['_Id'];
-        var Qty = req.body;
+//Routes With /u/Term/Data
+BookingRouter
+    .get('/u/:_term/:_id',passport.authenticate('jwt',
+        {
+            session: false
+        }),function (req, res) {
+            
+            var name = req.params['_term'];
+            var id = req.params['_id'];
+            if(name=="UserId"){
+                Booking.getBookingByUserId(id, function (err, bookings) {
+                    if (err) {
+                        console.log('Error :' + err);
+                        res.json({'success': false, 'msg': 'Error Reteriving Bookings with User Id : '+id, data:[]});
+                    }
+                    else {
+                         res.json({'success': true, 'msg': 'We Found All Bookings with User Id: '+id, data:bookings});
+                    }
+                });
+            }
+            else if(name=="BranchId"){
+                Booking.getBookingByBranchId(id, function (err, bookings) {
+                    if (err) {
+                        console.log('Error :' + err);
+                        res.json({'success': false, 'msg': 'Error Reteriving Bookings with branch Id : '+id, data:[]});
+                    }
+                    else {
+                         res.json({'success': true, 'msg': 'We Found All Bookings with Branch Id: '+id, data:bookings});
+                    }
+                });
+            }
+            else if(name=="TableId"){
+                Booking.getBookingByTableId(id, function (err, bookings) {
+                    if (err) {
+                        console.log('Error :' + err);
+                        res.json({'success': false, 'msg': 'Error Reteriving Bookings with Table Id : '+id, data:[]});
+                    }
+                    else {
+                         res.json({'success': true, 'msg': 'We Found All Bookings with Table Id: '+id, data:bookings});
+                    }
+                });
+            }
+            else {
+                res.json({'success': false, 'msg': 'Wrong Path!', data : []});
+               
+            }
+    })
 
-        Booking.updateQuantity(id,Qty,function (err,Itm) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Editing Booking Quantity!'});}
-            else{res.json({'status': 'Success', 'msg' : Itm.Name+' Quantity Updated Successfully!'});}
-        });
-    });
 
 module.exports = BookingRouter;

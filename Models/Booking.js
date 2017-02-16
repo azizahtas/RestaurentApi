@@ -11,6 +11,7 @@ var BookingSchema = new Schema({
     Date : {type : Date, required: true },
     _TimeSlotId : {type : String, required: true },
     NoOfPersons : {type : Number, required: true },
+    Canceled : {type : Boolean, required: true },
     Orders : {
         _MenuId : String
     }
@@ -20,15 +21,29 @@ var BookingSchema = new Schema({
 var Booking = module.exports = mongoose.model('Booking',BookingSchema,'Bookings');
 
 module.exports.getAllBookings = function(callback){
-    Booking.find({},callback);
+   Booking.find({},callback);
 };
 module.exports.getBookingsByDate = function(Term,callback){
     var d = new Date(Term);
-    Booking.find({ "Date" : d },{},{},callback);
+    Booking.find({ "Date" : d },{},callback);
 };
 module.exports.getBookingById = function(Id,callback){
     Booking.findById(Id,{},{},callback);
 };
+module.exports.getBookingByBranchId = function(Id,callback){
+    Booking.find({ "_BranchId" : Id},{},callback);
+};
+module.exports.getBookingByUserId = function(Id,callback){
+    Booking.find({ "_UserId" : Id},{},callback);
+};
+module.exports.getBookingsByCanceled = function(canceled,callback){
+    if(canceled) Booking.find({ "Canceled" : canceled},{},callback);
+    else Booking.find({ "Canceled" : canceled},{},callback);
+};
+module.exports.getByTableId = function(Id,callback){
+    Booking.find({ "_TableId" : Id},{},callback);
+};
+
 module.exports.deleteBookingById = function(Id,callback){
     Booking.findByIdAndRemove(Id,{},callback);
 };
@@ -40,9 +55,5 @@ module.exports.addBooking = function(booking,callback){
 
 module.exports.UpdateBooking = function(Id,itm,callback){
     Booking.findByIdAndUpdate(Id,itm,{},callback);
-};
-
-module.exports.checkBookingByName = function (name, callback) {
-  Booking.findOne({Name: name},{Name :0,Size:0,Rate:0,__v:0},callback);
 };
 
