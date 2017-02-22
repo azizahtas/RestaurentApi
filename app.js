@@ -61,30 +61,9 @@ app.get('/api',function (req,res) {
 app.get('/api/signup',function (req,res) {
     res.json({msg:'in signup Get'});
 });
-/*
-app.post('/api/signup',
-    passport.authenticate('local-signup'/*,*/
-/*{
-    session: false,
-  /*  successRedirect:'/profile',
-        failureRedirect:'/api/signup'*//*
-}*/
-        /*
-),
-    function (err,req, res) {
-        res.json({duh:"lalala"});
-    }
-);
-
-         app.post('/profile',function (req, res, next) {
-         res.json({"msg":"Into the Profile"})
-         });
-*/
-
-
 
 //****************************************************************************/
-/*
+
 // Handle 404
 app.use(function(req, res) {
     res.status(400);
@@ -95,7 +74,7 @@ app.use(function(req, res) {
 app.use(function(error, req, res, next) {
     res.status(500);
     res.render('ErrorPage/index', {title:'500: Internal Server Error', error: error});
-});*/
+});
 app.listen(Port,function () {
     console.log('Listening On Port '+Port);
 });
