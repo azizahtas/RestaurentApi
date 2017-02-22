@@ -1,6 +1,6 @@
 var express = require('express');
 var CategoryRouter = express.Router();
-var Category = require('../Models/Category').Secret;
+var Category = require('../Models/Category');
 
 CategoryRouter.use('*',function (req, res, next) {
     console.log('Inside Category Controller!');

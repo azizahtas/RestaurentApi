@@ -54,17 +54,17 @@ _.forEach(RoutesApi,function (key,value) {
     app.use('/api'+value,key); 
 });
 
+//Process the signup form
+app.get('/api/signup',function (req,res) {
+    res.json({msg:'in signup Get'});
+});
+
 app.get('/',function (req,res) {
     res.redirect('/api');
 });
 app.get('/api',function (req,res) {
     res.render('ErrorPage/index');
 });
-//Process the signup form
-app.get('/api/signup',function (req,res) {
-    res.json({msg:'in signup Get'});
-});
-
 //****************************************************************************/
 
 // Handle 404
@@ -75,6 +75,7 @@ app.use(function(req, res) {
 
 // Handle 500
 app.use(function(error, req, res, next) {
+    console.log(error);
     res.status(500);
     res.render('ErrorPage/index', {title:'500: Internal Server Error', error: error});
 });
