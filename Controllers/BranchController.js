@@ -3,7 +3,7 @@ var BranchRouter = express.Router();
 var Branch = require('../Models/Branch');
 var passport =require('passport');
 var jwt =require('jwt-simple');
-var config = require('../config');
+var config = require('../config').Secret;
 var User = require('../Models/User');
 
 BranchRouter.use('*',function (req, res, next) {

@@ -2,7 +2,7 @@ var express = require('express');
 var UserRouter = express.Router();
 var passport = require('passport');
 var jwt = require('jwt-simple');
-var config = require('../config');
+var config = require('../config').Secret;
 var User = require('../Models/User');
 
 UserRouter.use('*', function (req, res, next) {

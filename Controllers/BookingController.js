@@ -3,7 +3,7 @@ var BookingRouter = express.Router();
 var Booking = require('../Models/Booking');
 var passport =require('passport');
 var jwt =require('jwt-simple');
-var config = require('../config');
+var config = require('../config').Secret;
 var User = require('../Models/User');
 
 BookingRouter.use('*',function (req, res, next) {
