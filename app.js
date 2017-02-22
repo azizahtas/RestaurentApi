@@ -15,6 +15,15 @@ var User = require('./Models/User');
 var Port = process.env.PORT || config.Online.port;
 var path = 'mongodb://'+config.Online.db_host+':'+config.Online.db_port+'/'+config.Online.db;
 mongoose.connect(path);
+//***********************CORS************************************
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header('Access-Control-Allow-Credentials', true);
+    next();
+});
+
 require('./config/passport')(passport);
 
 app.set('view engine','hbs');
@@ -23,13 +32,7 @@ app.use(express.static('Views/ErrorPage'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-//***********************************************************
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    next();
-});
+
 
 //Pasport Needed *****************************************
 app.use(passport.initialize());
