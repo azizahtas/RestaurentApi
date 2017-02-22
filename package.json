@@ -4,8 +4,8 @@
   "description": "An Api for feeding Data to Restaurent Website!",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start" : "node app.js"  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/azizahtas/PortfollioApi.git"

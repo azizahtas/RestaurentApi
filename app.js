@@ -12,7 +12,7 @@ var passport = require('passport');
 
 var User = require('./Models/User');
 
-var Port = config.port;
+var Port = config.Online.port;
 var path = 'mongodb://'+config.Online.db_host+':'+config.Online.db_port+'/'+config.Online.db;
 mongoose.connect(path);
 require('./config/passport')(passport);
