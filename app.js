@@ -23,6 +23,14 @@ app.use(express.static('Views/ErrorPage'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+//***********************************************************
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    next();
+});
+
 //Pasport Needed *****************************************
 app.use(passport.initialize());
 
@@ -31,13 +39,7 @@ var bcrypt   = require('bcrypt-nodejs');
 var LocalStrategy   = require('passport-local').Strategy;
 app.use(cookieParser());
 
-//***********************************************************
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    next();
-});
+
 
 //Routes==============
 //App MiddleWare For All Routes
