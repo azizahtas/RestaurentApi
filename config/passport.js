@@ -3,6 +3,7 @@ var JwtStrategy = require('passport-jwt').Strategy,
 
 var User = require('../Models/User');
 var config = require('../config').Secret;
+ var ObjectId = require('mongodb').ObjectID;
 
 module.exports = function(passport) {
 
@@ -12,11 +13,11 @@ module.exports = function(passport) {
 
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
         console.log(jwt_payload);
-        User.findOne({"_id": jwt_payload._id}, function (err, user) {
+        User.findOne({"_id":ObjectId(jwt_payload._id)}, function (err, user) {
             if(err){
                 return done(err,false);
             }
-            if(user){
+            if(user){ 
                 done(null, user);
             }
             else{
