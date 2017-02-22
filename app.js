@@ -12,7 +12,7 @@ var passport = require('passport');
 
 var User = require('./Models/User');
 
-var Port = config.Online.port;
+var Port = process.env.PORT || config.Online.port;
 var path = 'mongodb://'+config.Online.db_host+':'+config.Online.db_port+'/'+config.Online.db;
 mongoose.connect(path);
 require('./config/passport')(passport);
@@ -50,10 +50,10 @@ app.all('*',function (req,res,next) {
 _.forEach(RoutesApi,function (key,value) {
     app.use('/api'+value,key); 
 });
-/*
+
 app.get('/',function (req,res) {
     res.redirect('/api');
-});*/
+});
 app.get('/api',function (req,res) {
     res.render('ErrorPage/index');
 });
