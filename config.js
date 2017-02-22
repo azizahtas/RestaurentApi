@@ -10,7 +10,7 @@ module.exports.Online = {
 	"port" : 5555,
 	"client" : 3000,
 	"db" : "restdb",
-	"db_host" : "NerdCoder:bir7cha8su6@ds145369.mlab.com",
+	"db_host" : "nerdcoder:nerdcoder@ds145369.mlab.com",
 	"db_port" : 45369,
 	"secret": "AzizAhtasIsAPro"
 };
