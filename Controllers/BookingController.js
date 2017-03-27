@@ -24,7 +24,7 @@ BookingRouter
             User.userExistsId(decoded, function (err, user) {
                 Booking.getAllBookings(function (err,Bookings) {
                     if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Retriving All Bookings!', data:[]});}
-                    else{res.json({'success': false, 'msg' : 'Error Retriving All Bookings!', data:Bookings});}
+                    else{res.json({'success': true, 'msg' : 'Error Retriving All Bookings!', data:Bookings});}
                 });
             });
         }
@@ -56,26 +56,44 @@ BookingRouter
     .get('/:_id',function (req, res) {
         var id = req.params['_id'];
         Booking.getBookingById(id,function (err,data) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Selecting Booking with Id : '+id});}
-            res.json(data);
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Selecting Booking with Id : '+id,data:[]});}
+            res.json({'success': true, 'msg' : 'We found Booking with Id : '+id,data:data});
         });
     })
     .delete('/:_id',function (req, res) {
         var id = req.params['_id'];
         Booking.deleteBookingById(id,function (err,data) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Deleting Booking with Id : '+id});}
-            else{res.json({'status': 'Success', 'msg' : data.Name + ' Deleted Successfully'});}
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Deleting Booking with Id : '+id});}
+            else{res.json({'success' : true, 'msg' :'Booking Deleted Successfully', data : []});}
 
         });
     })
-    .put('/:_id',function (req, res) {
+    .put('/Cancel/:_id',function (req, res) {
         var id = req.params['_id'];
-        var rec_proj = req.body;
-        Booking.UpdateBooking(id,rec_proj,function (err,Booking) {
-            if(err){console.log('Error :'+err); res.json({'status': 'Error', 'msg' : 'Error Editing Booking with Id : '+id});}
-            res.json({'status': 'Success', 'msg' : Booking.Name+ ' Updated Successfully'});
+        Booking.CancelBooking(id,function (err,Booking) {
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Canceling Booking with Id : '+id, data : []});}
+            res.json({'success': true, 'msg' : ' Booking Canceled Successfully', data : []});
         });
+    }).put('/Arrived/:_id',function (req, res) {
+        var id = req.params['_id'];
+        Booking.ArrivedBooking(id,function (err,Booking) {
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Arrived Booking with Id : '+id, data : []});}
+            res.json({'success': true, 'msg' : 'Success Setting Booking Status as Arrived!', data : []});
+        });
+    }).put('/Open/:_id',function (req, res) {
+        var id = req.params['_id'];
+        Booking.StatusOpen(id,function (err,Booking) {
+            if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing Booking with Id : '+id});}
+            res.json({'success': true, 'msg' :'Success Opening Booking Status!', data : []});
+        });
+    }).put('/:_id',function (req, res) {
+    var id = req.params['_id'];
+    var rec_proj = req.body;
+    Booking.UpdateBooking(id,rec_proj,function (err,Booking) {
+        if(err){console.log('Error :'+err); res.json({'success': false, 'msg' : 'Error Editing Booking with Id : '+id, data:[]});}
+        res.json({'success': true, 'msg' : Booking.Name+ ' Updated Successfully', data:[]});
     });
+});
 
 //Misc Routes
 // Routs With /u/Term

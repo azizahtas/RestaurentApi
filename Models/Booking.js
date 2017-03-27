@@ -7,11 +7,13 @@ var BookingSchema = new Schema({
     _BranchId : {type : String, required: true},
     TNo : {type : Number, required: true},
     _UserId : {type : String, required : true },
+    _UserName : {type : String, required : true },
 
     Date : {type : Date, required: true },
     _TimeSlotId : {type : String, required: true },
     NoOfPersons : {type : Number, required: true },
     Canceled : {type : Boolean, required: true },
+    Arrived : {type : Boolean, required: true },
     Orders : {
         _MenuId : String
     }
@@ -42,6 +44,30 @@ module.exports.getBookingsByCanceled = function(canceled,callback){
 };
 module.exports.getByTableId = function(Id,callback){
     Booking.find({ "_TableId" : Id},{},callback);
+};
+module.exports.CancelBooking = function(Id,callback){
+    Booking.findOne({ "_id" : Id},{},function (err, booking) {
+        var newBooking = new Booking(booking);
+            newBooking.Canceled = true;
+            newBooking.Arrived = false;
+            newBooking.save(callback);
+    });
+};
+module.exports.ArrivedBooking = function(Id,callback){
+    Booking.findOne({ "_id" : Id},{},function (err, booking) {
+        var newBooking = new Booking(booking);
+            newBooking.Canceled = false;
+            newBooking.Arrived = true;
+            newBooking.save(callback);
+    });
+};
+module.exports.StatusOpen = function(Id,callback){
+    Booking.findOne({ "_id" : Id},{},function (err, booking) {
+        var newBooking = new Booking(booking);
+            newBooking.Canceled = false;
+            newBooking.Arrived = false;
+            newBooking.save(callback);
+    });
 };
 
 module.exports.deleteBookingById = function(Id,callback){
