@@ -8,7 +8,8 @@ var BranchSchema = new Schema({
     Address : {type : String, required : true },
     Location : {
         Lat:String,
-        Long:String
+        Long:String,
+        Label : String
     },
     Tables : [
         {
