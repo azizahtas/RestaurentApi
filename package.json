@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start" : "node app.js"  },
+    "start": "node app.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/azizahtas/PortfollioApi.git"
@@ -24,6 +25,7 @@
     "body-parser": "*",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
+    "csprng": "^0.1.2",
     "express": "*",
     "express-session": "^1.14.2",
     "hbs": "~4.0.0",
@@ -31,6 +33,7 @@
     "lodash": "^4.13.1",
     "method-override": "^2.3.6",
     "mongoose": "*",
+    "nodemailer": "^4.0.1",
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
     "passport-google-oauth": "^1.0.0",

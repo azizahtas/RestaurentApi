@@ -4,6 +4,16 @@ var passport = require('passport');
 var jwt = require('jwt-simple');
 var config = require('../config').Secret;
 var User = require('../Models/User');
+var nodemailer = require('nodemailer');
+var rand = require('csprng');
+
+var smtpTransport = nodemailer.createTransport({
+    service : 'gmail',
+   auth : {
+       user : "restaurentbooking@gmail.com",
+       pass : "restaurent123456"
+   }
+});
 
 UserRouter.use('*', function (req, res, next) {
     console.log('Inside User Controller!');
@@ -84,6 +94,125 @@ UserRouter
         }
     })
     ;
+
+UserRouter
+.post('/forgotPassword', function(req, res) {
+    var temp = rand(24,24);
+    if (!req.body.email) {
+        res.json({success: false, msg: 'Please enter email Id.',data:[]});
+    } else {
+        var email = req.body.email;
+        User.userExistsEmail(email,function (err,usr) {
+            if(err){
+                console.log("Error While resetting password!");
+                console.log(err);
+                res.json({success: false, msg: "Something went wrong!",data:[]});
+            }
+            else if(usr){
+                usr.otherDetails.temp_str = temp;
+                User.updateUser(usr._id,usr.otherDetails,function (err, usr) {
+                    if(err){
+                        console.log("Error Resetting");
+                    }
+                    else{
+                        var mailOptions = {
+                            from: "BookKaro.Com <restaurentbooking@gmail.com>",
+                            to: email,
+                            subject: "Reset Password ",
+                            html: "<b>Hello "+email+".</b>  <p>Code to reset your Password is <h1>"+temp+"</h1></p> Regards, Ronit , From BookKaro.Com Team."
+                        };
+                        console.log(mailOptions);
+                        smtpTransport.sendMail(mailOptions,function (err,response) {
+                            
+                            if(err){
+                                res.json({success: false, msg : "Error While Sending Mail!", data: []});
+                            }
+                            else{
+                                res.json({success: true, msg : "Check your Email and enter the verification code to reset your Password", data: []});
+                            }
+                        });
+                    }
+                });
+            }
+            else if(!usr){
+                res.json({success: false, msg: "Sorry the email dose not exist!",data:[]});
+            }
+            else {
+                res.json({success: false, msg: "Something went wrong!",data:[]});
+            }
+        });
+    }
+})
+    .post('/checkKey', function(req, res) {
+    if (!req.body.email) {
+        res.json({success: false, msg: 'Please enter email Id.',data:[]});
+    } else {
+        var email = req.body.email;
+        var key = req.body.key;
+        User.userExistsEmail(email,function (err,usr) {
+            if(err){
+                console.log("Error While resetting password!");
+                console.log(err);
+                res.json({success: false, msg: "Something went wrong!",data:[]});
+            }
+            else if(usr){
+                if(key == usr.otherDetails.temp_str){
+                  res.json({success: true, msg : "Kay Matched!", data: []});
+                }
+                else{
+                    res.json({success: false, msg : "Error Your key Does not Match!, Please Try Again!", data: []});
+                }
+            }
+            else if(!usr){
+                res.json({success: false, msg: "Sorry the email dose not exist!",data:[]});
+            }
+            else {
+                res.json({success: false, msg: "Something went wrong! Please try Again!",data:[]});
+            }
+        });
+    }
+})
+    .post('/resetPassword', function(req, res) {
+    if (!req.body.email) {
+        res.json({success: false, msg: 'Please enter email Id.',data:[]});
+    } else {
+        var email = req.body.email;
+        var key = req.body.key;
+        var newPass = req.body.newPassword;
+        User.userExistsEmail(email,function (err,usr) {
+            if(err){
+                console.log("Error While resetting password!");
+                console.log(err);
+                res.json({success: false, msg: "Something went wrong!",data:[]});
+            }
+            else if(usr){
+                if(key == usr.otherDetails.temp_str){
+                    usr.local.password = newPass;
+                    User.resetPassword(usr,function (err, user) {
+                        if(err){
+                            console.log("Error ResetPassword in User Controller");
+                            console.log(err);
+                            res.json({success: false, msg : "Error While Resetting Password, Please Try Again!", data: []});
+                        }
+                        else{
+                            res.json({success: true, msg : "Password reset Successful!", data: []});
+                        }
+                    })
+                }
+                else{
+                    res.json({success: false, msg : "Error Your key Does not Match!, Please Try Again!", data: []});
+                }
+            }
+            else if(!usr){
+                res.json({success: false, msg: "Sorry the email dose not exist!",data:[]});
+            }
+            else {
+                res.json({success: false, msg: "Something went wrong! Please try Again!",data:[]});
+            }
+        });
+    }
+})
+;
 
 UserRouter
     .get('/', passport.authenticate('jwt',
@@ -171,4 +300,6 @@ UserRouter
                 });
             }
         });
+
+
 module.exports = UserRouter;

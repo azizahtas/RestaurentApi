@@ -33,7 +33,8 @@ var userSchema = mongoose.Schema({
         fname : {type : String, required : true },
         lname : {type : String, required : true },
         phone:{type : String, required : true },
-        _branchId : String
+        _branchId : String,
+        temp_str : {type : String, default: ""  },
     }
 
 },{collection : 'Users'});
@@ -81,6 +82,8 @@ module.exports.updateUser = function(Id,otherDetails,callback){
             newUser.otherDetails.lname = otherDetails.lname;
             newUser.otherDetails.phone = otherDetails.phone;
             newUser.otherDetails._branchId = otherDetails._branchId;
+            newUser.otherDetails.temp_str = otherDetails.temp_str;
+            console.log(newUser);
             newUser.save(callback);
         }
         else {
@@ -113,6 +116,15 @@ module.exports.login = function(user,callback){
         else if(!usr) {
             callback({msg:'Authentication Failed! Email does not exist!'},false,null);
         }
+    });
+};
+module.exports.resetPassword = function(user,callback){
+    User.findOne({"_id":user._id},{},function (err,usr) {
+        var newPass = new User(usr);
+        newPass.local.password = newPass.generateHash(user.local.password);
+        newPass.otherDetails.temp_str = "";
+        
+        newPass.save(callback);
     });
 };
 module.exports.userExistsId = function(user,callback){
