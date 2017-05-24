@@ -72,6 +72,19 @@ module.exports.addUser = function(user,callback){
     });
 };
 
+module.exports.addUserGoogle = function(user,callback){
+    User.findOne({"google.email":user.google.email},{},function (err, usr) {
+        if(usr){
+            callback({msg:"User Already Exists"});
+            console.log("User Exists");
+        }
+        else {
+            var newUser = new User(user);
+            newUser.save(callback);
+        }
+    });
+};
+
 module.exports.updateUser = function(Id,otherDetails,callback){
     User.findById(Id,{},function (err, usr) {
         if(usr){
@@ -132,6 +145,9 @@ module.exports.userExistsId = function(user,callback){
 };
 module.exports.userExistsEmail = function(email,callback){
     User.findOne({"local.email":email},{},callback);
+};
+module.exports.userExistsEmailGoogle = function(email,callback){
+    User.findOne({"google.email":email},{},callback);
 };
 module.exports.getAllUsers = function(callback){
     User.find({"otherDetails.who":false},callback);

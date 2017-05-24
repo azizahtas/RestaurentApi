@@ -1,15 +1,31 @@
 var JwtStrategy = require('passport-jwt').Strategy,
     ExtractJwt = require('passport-jwt').ExtractJwt;
+var FacebookStrategy = require('passport-facebook').Strategy;
+var TwitterStrategy  = require('passport-twitter').Strategy;
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 var User = require('../Models/User');
-var config = require('../config').Secret;
+var config = require('../config');
+
  var ObjectId = require('mongodb').ObjectID;
 
 module.exports = function(passport) {
 
+    // used to serialize the user for the session
+    passport.serializeUser(function(user, done) {
+        done(null, user.id);
+    });
+
+    // used to deserialize the user
+    passport.deserializeUser(function(id, done) {
+        User.findById(id, function(err, user) {
+            done(err, user);
+        });
+    });
+
     var opts = {};
     opts.jwtFromRequest = ExtractJwt.fromAuthHeader();
-    opts.secretOrKey = config.secret;
+    opts.secretOrKey = config.Secret.secret;
 
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
         console.log(jwt_payload);
@@ -25,7 +41,54 @@ module.exports = function(passport) {
             }
         })
     }));
+// =========================================================================
+    // GOOGLE ==================================================================
+    // =========================================================================
+    passport.use(new GoogleStrategy({
 
+        clientID        : config.auth.googleAuth.clientID,
+        clientSecret    : config.auth.googleAuth.clientSecret,
+        callbackURL     : config.auth.googleAuth.callbackURL,
+
+    },
+    function(token, refreshToken, profile, done) {
+
+        // make the code asynchronous
+        // User.findOne won't fire until we have all our data back from Google
+        process.nextTick(function() {
+
+            // try to find the user based on their google id
+            User.findOne({ 'google.id' : profile.id }, function(err, user) {
+                if (err)
+                    return done(err);
+
+                if (user) {
+
+                    // if a user is found, log them in
+                    return done(null, user);
+                } else {
+                    // if the user isnt in our database, create a new user
+                    var newUser          = new User();
+
+                    // set all of the relevant information
+                    newUser.google.id    = profile.id;
+                    newUser.google.token = token;
+                    newUser.google.name  = profile.displayName;
+                    newUser.google.email = profile.emails[0].value; // pull the first email
+                    
+                    
+                    console.log(newUser)
+                    // save the user
+                   /* newUser.save(function(err) {
+                        if (err)
+                            throw err;
+                        return done(null, newUser);
+                    });*/
+                }
+            });
+        });
+
+    }));
 
 
 

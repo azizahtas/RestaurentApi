@@ -62,6 +62,66 @@ UserRouter
             });
         }
     })
+    .post('/auth/google', function (req, res) {
+        if (!req.body.email || !req.body.token) {
+            res.json({ success: false, msg: 'Please pass email and token Sent By Google!', data: [] });
+        } 
+        else 
+          User.userExistsEmailGoogle(req.body.email,function (err,usr) {
+            if(err){
+                console.log(err);
+                res.json({success: false, msg: "Something went wrong!",data:[]});
+            }
+            else if(usr){
+                      var newUser = {
+                        who: usr.otherDetails.who,
+                        bm: usr.otherDetails.bm,
+                        _id: usr._id,
+                        fname: usr.otherDetails.fname,
+                        lname: usr.otherDetails.lname,
+                        _branchId: usr.otherDetails._branchId
+                    };
+                    var token = jwt.encode(newUser, config.secret);
+                    res.json({ success: true, msg: "Successfully Logged In!", data: token });
+            }
+            else if(!usr){
+                 var user = new User();
+                    user.google.id = req.body.id;
+                    user.google.token = req.body.token;
+                    user.google.email = req.body.email;
+                    user.google.name = req.body.name;
+                    user.otherDetails.who = false;
+                    user.otherDetails.bm = false;
+                    user.otherDetails.fname = req.body.name.split(' ')[0];
+                    user.otherDetails.lname = req.body.name.split(' ')[1];
+                    user.otherDetails.phone = "7789456123";
+                    user.otherDetails._branchId = "";
+                    user.otherDetails.temp_str = "";
+            User.addUserGoogle(user, function (err, usr) {
+                if (err) {
+                    console.log(err);
+                    res.json({ success: false, msg: 'Email already exists.', data: [] });
+                }
+                else {
+                    var newUser = {
+                        who: usr.otherDetails.who,
+                        bm: usr.otherDetails.bm,
+                        _id: usr._id,
+                        fname: usr.otherDetails.fname,
+                        lname: usr.otherDetails.lname,
+                        _branchId: usr.otherDetails._branchId
+                    };
+                    var token = jwt.encode(newUser, config.secret);
+                    res.json({ success: true, msg: "Successfully Logged In!", data: token });
+                }
+            });
+         }
+            else {
+                res.json({success: false, msg: "Something went wrong! Please try Again!",data:[]});
+            }
+        });
+       
+    })
     .post('/login', function (req, res) {
         if (!req.body.email || !req.body.password) {
             res.json({ success: false, msg: 'Please pass email and password.', data: [] });
