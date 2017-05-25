@@ -1,24 +1,23 @@
-module.exports.Online = {
+module.exports.Local = {
 	"port" : 5555,
 	"client" : 3000,
-	"db" : "RestDb",
+	"db" : "restdb",
 	"db_host" : "localhost",
 	"db_port" : 27017,
 	"api_host" : "localhost",
 	"client_host": "localhost",
 	"client_port" : 4200
 };
-module.exports.Local = {
+module.exports.Online = {
 	"port" : 5555,
 	"client" : 3000,
 	"db" : "restdb",
 	"db_host" : "ronit:root@ds135800.mlab.com",
 	"db_port" : 35800,
 	"api_host" : "restaurentapiserver.herokuapp.com",
-	"client_host": "http://bookkaro.byethost15.com/",
+	"client_host": "http://restaurentbooking.tk/",
 	"client_port" : ''
 };
-
 module.exports.Secret = {
 	"secret": "AzizAhtasIsAPro"
 };
