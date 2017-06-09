@@ -1,6 +1,9 @@
 var express = require('express');
 var CategoryRouter = express.Router();
 var Category = require('../Models/Category');
+var passport =require('passport');
+var jwt =require('jwt-simple');
+var config = require('../config').Secret;
 
 CategoryRouter.use('*',function (req, res, next) {
     console.log('Inside Category Controller!');
